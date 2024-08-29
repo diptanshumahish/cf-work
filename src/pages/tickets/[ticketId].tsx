@@ -27,21 +27,22 @@ export default function TicketDetails() {
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false); // State for edit mode
 
-  useEffect(() => {
-    const fetchTicket = async () => {
-      if (ticketId) {
-        const ticketDoc = await getDoc(doc(db, "tickets", ticketId as string));
-        if (ticketDoc.exists()) {
-          const ticketData = ticketDoc.data() as Ticket;
-          setTicket(ticketData);
-          setTitle(ticketData.title);
-          setDescription(ticketData.description);
-          setAssignedTo(ticketData.assignedTo);
-        } else {
-          console.log("No such document!");
-        }
+  const fetchTicket = async () => {
+    if (ticketId) {
+      const ticketDoc = await getDoc(doc(db, "tickets", ticketId as string));
+      if (ticketDoc.exists()) {
+        const ticketData = ticketDoc.data() as Ticket;
+        setTicket(ticketData);
+        setTitle(ticketData.title);
+        setDescription(ticketData.description);
+        setAssignedTo(ticketData.assignedTo);
+      } else {
+        console.log("No such document!");
       }
-    };
+    }
+  };
+  useEffect(() => {
+
 
     fetchTicket();
   }, [ticketId]);
@@ -68,14 +69,14 @@ export default function TicketDetails() {
   };
 
   if (!ticket) {
-    return <main className="h-screen w-screen flex flex-col items-center justify-center">
+    return <main className="h-screen bg-gray-100 w-screen flex flex-col items-center justify-center">
       <h2>Loading</h2>
       <Loader2 className="animate-spin" />
      </main>
   }
 
   return (
-    <main className={` ${Pl.className} p-8 px-[5%]`}>
+    <main className={` ${Pl.className} bg-gray-100 p-8 px-[5%]`}>
       <Toaster />
       <div className="mb-4 flex flex-col gap-4">
 
@@ -106,7 +107,7 @@ export default function TicketDetails() {
             </label>
             <textarea
               id="description"
-              className={`w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500 ${!isEditMode ? 'bg-white border-none p-0' : 'bg-gray-100 p-2'}`}
+              className={`w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500 ${!isEditMode ? ' border-none p-0' : 'bg-gray-100 p-2'}`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -121,7 +122,7 @@ export default function TicketDetails() {
             <input
               type="text"
               id="assignedTo"
-              className={`w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500 ${!isEditMode ? 'bg-white border-none p-0' : 'bg-gray-100 '}`}
+              className={`w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500 ${!isEditMode ? ' border-none p-0' : 'bg-gray-100 '}`}
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
               required
@@ -146,7 +147,7 @@ export default function TicketDetails() {
         </p>
         <p className="text-gray-600 mb-4">
           <strong>Status:</strong> <ReturnStatus status={ticket.status} />
-          {user?.email === ticket.createdBy && <ChangeStatus ticketId={ticketId as string} currentStatus={ticket.status} />}
+          {user?.email === ticket.createdBy && <ChangeStatus onS={()=>{fetchTicket()}} ticketId={ticketId as string} currentStatus={ticket.status} />}
         </p>
 
         {ticket.comments.length > 0 && (

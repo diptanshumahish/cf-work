@@ -6,11 +6,12 @@ import { Toaster, toast } from "sonner";
 interface ChangeStatusProps {
   ticketId: string;
   currentStatus: string;
+  onS:()=>void;
 }
 
 const statusOptions = ["open", "in-progress", "closed"];
 
-export default function ChangeStatus({ ticketId, currentStatus }: ChangeStatusProps) {
+export default function ChangeStatus({ ticketId, currentStatus,onS }: ChangeStatusProps) {
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
 
@@ -27,6 +28,8 @@ export default function ChangeStatus({ ticketId, currentStatus }: ChangeStatusPr
       });
 
       toast.success(`Ticket status changed to ${newStatus}`);
+      onS();
+
     } catch (error) {
       toast.error("Error changing status. Please try again.");
       console.error("Error updating document: ", error);

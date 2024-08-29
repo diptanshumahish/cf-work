@@ -28,6 +28,8 @@ const SignIn = () => {
       const res = await signin( email, password);
       if(res?.user.email){
         toast.success(`signed in as ${res?.user.email}`);
+      }else{
+        toast.error("Wrong credentials");
       }
 
 

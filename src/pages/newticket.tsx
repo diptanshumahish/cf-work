@@ -54,9 +54,9 @@ export default function NewTicket() {
   };
 
   return (
-    <div className={` px-[5%] pt-[5%] ${Pl.className} `}>
+    <div className={` px-[5%] pt-[5%] ${Pl.className} bg-gray-100`}>
 
-     <div className="   border border-black flex">
+     <div className="   border border-black flex bg-white">
      <div className="flex flex-col justify-end w-[70%] p-8">
      <div className="flex flex-col gap-1 py-4">
      <h1 className="text-5xl font-bold">Raise a  New Ticket</h1>
