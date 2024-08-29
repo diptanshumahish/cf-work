@@ -18,7 +18,7 @@ export default function Navbar() {
   }
 
   return (
-   <div className={` ${Pl.className} fixed left-0 right-0 top-0 p-4 px-[5%] z-20`}>
+   <div className={` ${Pl.className} fixed left-0 right-0 top-0 p-4 px-[5%] z-20 bg-gray-100`}>
      <nav className="p-2 border border-black text-black w-full bg-yellow-300">
       <div className="px-4 flex justify-between items-center">
         <Link href="/" className="text-lg font-bold">

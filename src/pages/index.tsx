@@ -3,14 +3,15 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, updateDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Ticket } from "@/models/ticket.model";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@/components/ui/button";
 import ReturnStatus from "@/utils/ReturnStatus";
-import { ArrowUpRight, Clock, PersonStanding } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight, Clock, PersonStanding } from "lucide-react";
+import moment from "moment";
 
 
 const Pl = Plus_Jakarta_Sans({ subsets: ["latin"] });
@@ -22,18 +23,25 @@ export default function Home() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const fetchTickets = async () => {
+    const ticketsQuery = query(
+      collection(db, "tickets"),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(ticketsQuery);
+    const ticketsData: Ticket[] = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Ticket[];
+
+    setTickets(ticketsData);
+  };
   useEffect(() => {
     if (!user) {
       router.push("/signin");
     } else {
-        const fetchTickets = async () => {
-        const querySnapshot = await getDocs(collection(db, "tickets"));
-        const ticketsData: Ticket[] = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Ticket[];
-        setTickets(ticketsData);
-      };
+
 
       fetchTickets();
     }
@@ -48,9 +56,24 @@ export default function Home() {
     const matchesSearch = ticket.assignedTo.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
+  const handleVote = async (ticketId: string, type: "upvote" | "downvote") => {
+    const ticketRef = doc(db, "tickets", ticketId);
+    if (type === "upvote") {
+      const currentUpvotes = tickets.find(ticket => ticket.id === ticketId)?.upvotes || 0;
+      await updateDoc(ticketRef, {
+        upvotes: currentUpvotes + 1,
+      });
+    } else if (type === "downvote") {
+      const currentDownvotes = tickets.find(ticket => ticket.id === ticketId)?.downvotes || 0;
+      await updateDoc(ticketRef, {
+        downvotes: currentDownvotes + 1,
+      });
+    }
+    fetchTickets();
+  };
 
   return (
-    <main className={`${Pl.className} p-8 px-[5%]`}>
+    <main className={`${Pl.className} p-8 px-[5%] bg-gray-100 min-h-screen`}>
       <div className="w-full justify-between flex items-center border-b mb-4 py-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold text-gray-800">All Tickets</h1>
@@ -86,7 +109,13 @@ export default function Home() {
         {filteredTickets.map((ticket) => (
           <div
             key={ticket.id}
-            className={twMerge(ticket.status === "in-progress" ? "bg-blue-100" : "bg-yellow-50", "p-4 border border-black flex flex-col gap-2")}
+            className={twMerge(
+              ticket.status === "open" ? "bg-green-100" :
+              ticket.status === "in-progress" ? "bg-blue-100" :
+              ticket.status === "closed" ? "bg-gray-100" :
+              "bg-yellow-50",
+              "p-4 border border-black flex flex-col gap-2"
+            )}
           >
             <div className="flex flex-col">
               <span className="text-xs">Title</span>
@@ -99,7 +128,8 @@ export default function Home() {
               </span>
               <ReturnStatus status={ticket.status} />
               <span className="text-sm bg-pink-100 px-2 py-1 border border-black flex items-center gap-1">
-                <Clock size={15} /> {new Date(ticket.createdAt).toLocaleDateString()}
+                <Clock size={15} /> {moment(ticket.createdAt).format("h:mm a [on] Do MMMM, YYYY")}
+
               </span>
             </div>
 
@@ -111,6 +141,23 @@ export default function Home() {
               </Button>
               <span className="text-sm"> comments ({ticket.comments.length})</span>
             </div>
+
+
+{/* <div className="flex gap-4 mt-2 items-center">
+  <div className="flex flex-col items-center">
+    <Button variant="ghost" onClick={() => handleVote(ticket.id, "upvote")}>
+      <ArrowUp color="green" size={20} />
+    </Button>
+    <span className="text-sm font-semibold">{ticket.upvotes ?? 0}</span>
+  </div>
+
+  <div className="flex flex-col items-center">
+    <Button variant="ghost" onClick={() => handleVote(ticket.id, "downvote")}>
+      <ArrowDown color="red" size={20} />
+    </Button>
+    <span className="text-sm font-semibold">{ticket.downvotes ?? 0}</span>
+  </div>
+</div> */}
             <span className="text-sm text-gray-600 italic"> this ticket was created by {ticket.createdBy}</span>
           </div>
         ))}

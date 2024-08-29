@@ -26,8 +26,11 @@ const SignIn = () => {
     e.preventDefault();
     try {
       const res = await signin( email, password);
+      if(res?.user.email){
+        toast.success(`signed in as ${res?.user.email}`);
+      }
 
-      toast.success(`signed in as ${res?.user.email}`);
+
 
     } catch (err) {
       toast.error("Unable to login, contact admin, or credentials error");
@@ -35,9 +38,9 @@ const SignIn = () => {
   };
 
   return (
-    <div className={`min-h-screen  flex flex-col justify-center items-center p-[5%]  ${Pl.className}`}>
+    <div className={`min-h-screen bg-gray-100  flex flex-col justify-center items-center p-[5%]  ${Pl.className}`}>
 
-      <div className=" w-full flex items-center  border border-black ">
+      <div className=" w-full flex bg-white items-center  border border-black ">
 
 
        <div className="w-[50%]  min-h-[70vh] flex flex-col justify-between border-r border-black">
