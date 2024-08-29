@@ -17,7 +17,7 @@ export default function NewTicket() {
   const router = useRouter();
   const [user] = useAuthState(auth);
 
-  const [title, setTitle] = useState(""); // New state for title
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ export default function NewTicket() {
   }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+
     setLoading(true);
 
     try {
@@ -62,14 +62,16 @@ export default function NewTicket() {
      <h1 className="text-5xl font-bold">Raise a  New Ticket</h1>
      <span className="text-xs text-gray-500 italic">Raise a ticket, for your otheer employees, make sure to assign the correct person.</span>
      </div>
-      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit} action={`https://formsubmit.co/${assignedTo}`} method="POST">
         <div className="flex flex-col gap-2">
           <label className="block text-gray-700 font-semibold mb-2" htmlFor="title">
             Title
           </label>
+          <input type="hidden" name="_subject" value="New ticket has been assigned to you"></input>
           <Input
             type="text"
             id="title"
+            name="ticket-title"
             placeholder="Your title goes here"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -84,7 +86,7 @@ export default function NewTicket() {
           <Textarea
             id="description"
             placeholder="add the description of the ticket here"
-
+            name="ticket-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
@@ -96,14 +98,18 @@ export default function NewTicket() {
             Assign To
           </label>
           <Input
-            type="text"
+
+            type="email"
             id="assignedTo"
+            name="ticket-assigned-to"
             placeholder="test@gmail.com"
             value={assignedTo}
             onChange={(e) => setAssignedTo(e.target.value)}
             required
           />
+          <input type="hidden" name="_captcha" value="false"></input>
         </div>
+        <input type="text" className="hidden" value={user?.email??""} name="assigned-by" />
 
         <Button
           type="submit"

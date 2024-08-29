@@ -170,7 +170,7 @@ export default function TicketDetails() {
 
         {ticket.status !== "closed" ? (
 
-          <AddComment ticketId={ticketId?.toString() ?? ""} currentUser={ticket.createdBy} />
+          <AddComment ticketId={ticketId?.toString() ?? ""} currentUser={user?.email??""} createdUser={ticket.createdBy}  />
 
 
          ) :<span>✅ This ticket has been closed</span> }

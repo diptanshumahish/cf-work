@@ -7,14 +7,15 @@ import { Button } from "../ui/button";
 interface AddCommentProps {
   ticketId: string;
   currentUser: string;
+  createdUser:string;
 }
 
-export default function AddComment({ ticketId, currentUser }: AddCommentProps) {
+export default function AddComment({ ticketId, currentUser,createdUser }: AddCommentProps) {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+
     setLoading(true);
 
     if (!ticketId) {
@@ -48,12 +49,15 @@ export default function AddComment({ ticketId, currentUser }: AddCommentProps) {
   return (
     <div className="mt-6">
       <Toaster />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}  action={ `https://formsubmit.co/${createdUser}`} method="POST" >
+
+      <input type="hidden" name="_subject" value={`New comment on your ticket by ${currentUser}`}></input>
         <div className="mb-4">
           <label htmlFor="comment" className="block text-gray-700 font-semibold mb-2">
             Add a Comment
           </label>
           <textarea
+          name="comment"
             id="comment"
             className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
             value={comment}
@@ -61,6 +65,8 @@ export default function AddComment({ ticketId, currentUser }: AddCommentProps) {
             required
           />
         </div>
+        <input type="hidden" name="_captcha" value="false"></input>
+        <input type="email" className="hidden" name="email" value={createdUser} placeholder="Email Address"></input>
 
         <Button
           type="submit"
@@ -69,6 +75,7 @@ export default function AddComment({ ticketId, currentUser }: AddCommentProps) {
         >
           {loading ? "Adding Comment..." : "Add Comment"}
         </Button>
+
       </form>
     </div>
   );
