@@ -76,7 +76,7 @@ export default function Home() {
     <main className={`${Pl.className} p-8 px-[5%] bg-gray-100 min-h-screen`}>
       <div className="w-full justify-between flex items-center border-b mb-4 py-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-3xl font-bold text-gray-800">All Tickets</h1>
+          <h1 className="text-3xl font-bold text-gray-800">All Tickets posted</h1>
           <h3>Here are all the tickets raised</h3>
         </div>
         <Link className="bg-black text-white px-6 py-2 rounded-md" href="/newticket">
