@@ -29,7 +29,7 @@ export default function TicketDetails() {
 
   const fetchTicket = async () => {
     if (ticketId) {
-      const ticketDoc = await getDoc(doc(db, "tickets", ticketId as string));
+      const ticketDoc = await getDoc(doc(db, "tickets", decodeURIComponent(ticketId.toString()) as string));
       if (ticketDoc.exists()) {
         const ticketData = ticketDoc.data() as Ticket;
         setTicket(ticketData);
@@ -79,12 +79,13 @@ export default function TicketDetails() {
     <main className={` ${Pl.className} bg-gray-100 p-8 px-[5%]`}>
       <Toaster />
       <div className="mb-4 flex flex-col gap-4">
+        <span>Ticket id {decodeURIComponent(ticketId?.toString()!)}</span>
 
 
-          <div className="flex items-center space-x-2">
+        {user?.email === ticket.createdBy && <div className="flex items-center space-x-2">
       <Switch id="airplane-mode" onCheckedChange={()=> setIsEditMode((prev) => !prev) } />
       <Label htmlFor="airplane-mode">Edit mode</Label>
-    </div>
+        </div>}
 
 
       </div>

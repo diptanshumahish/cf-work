@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, limit, getDocs, setDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -28,21 +28,55 @@ export default function NewTicket() {
     }
   }, [user, router]);
 
+
+
+// Function to generate the next ID
+const generateNextId = (lastId: string): string => {
+  const idNumber = parseInt(lastId.split("#")[1]) || 0;
+  const nextIdNumber = idNumber + 1;
+  return `cf#${nextIdNumber.toString().padStart(5, '0')}`;
+};
+
+const addTicket = async () => {
+  try {
+    // Query to get the last ticket ID
+    const ticketsQuery = query(
+      collection(db, "tickets"),
+      orderBy("createdAt", "desc"),
+      limit(1)
+    );
+    const querySnapshot = await getDocs(ticketsQuery);
+
+    // Determine the last ID and generate the next ID
+    const lastTicket = querySnapshot.docs[0];
+    const lastId = lastTicket ? lastTicket.id : "cf#00000";
+    const nextId = generateNextId(lastId);
+
+    // Add the new ticket document with the custom ID
+    await setDoc(doc(db, "tickets", nextId), {
+      title, 
+      description,
+      assignedTo,
+      createdBy: user?.email || "Anonymous",
+      status: "open",
+      createdAt: new Date().toISOString(),
+      comments: [],
+    });
+
+    console.log("Ticket added with ID: ", nextId);
+
+  } catch (error) {
+    console.error("Error adding ticket: ", error);
+  }
+};
+
+
   const handleSubmit = async (e: React.FormEvent) => {
 
     setLoading(true);
 
     try {
-      await addDoc(collection(db, "tickets"), {
-        title, // Add title to the Firestore document
-        description,
-        assignedTo,
-        createdBy: user?.email || "Anonymous",
-        status: "open",
-        createdAt: new Date().toISOString(),
-        comments: [],
-      });
-
+     addTicket();
       toast.success("Ticket created successfully!");
       router.push("/");
     } catch (error) {

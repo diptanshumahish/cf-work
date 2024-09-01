@@ -13,7 +13,6 @@ import ReturnStatus from "@/utils/ReturnStatus";
 import { ArrowDown, ArrowUp, ArrowUpRight, Clock, PersonStanding } from "lucide-react";
 import moment from "moment";
 
-
 const Pl = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export default function Home() {
@@ -37,25 +36,28 @@ export default function Home() {
 
     setTickets(ticketsData);
   };
+
   useEffect(() => {
     if (!user) {
       router.push("/signin");
     } else {
-
-
       fetchTickets();
     }
   }, [user, router]);
 
   const handleCardClick = (ticketId: string) => {
-    router.push(`/tickets/${ticketId}`);
+    router.push(`/tickets/${encodeURIComponent(ticketId)}`);
   };
 
   const filteredTickets = tickets.filter(ticket => {
     const matchesStatus = statusFilter === "all" || ticket.status === statusFilter;
-    const matchesSearch = ticket.assignedTo.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      ticket.assignedTo.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      ticket.id.toLowerCase().includes(searchTerm.toLowerCase());
+
     return matchesStatus && matchesSearch;
   });
+
   const handleVote = async (ticketId: string, type: "upvote" | "downvote") => {
     const ticketRef = doc(db, "tickets", ticketId);
     if (type === "upvote") {
@@ -98,7 +100,7 @@ export default function Home() {
 
         <input
           type="text"
-          placeholder="Search by assigned to..."
+          placeholder="Search by assigned to or ticket number..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500"
@@ -129,7 +131,6 @@ export default function Home() {
               <ReturnStatus status={ticket.status} />
               <span className="text-sm bg-pink-100 px-2 py-1 border border-black flex items-center gap-1">
                 <Clock size={15} /> {moment(ticket.createdAt).format("h:mm a [on] Do MMMM, YYYY")}
-
               </span>
             </div>
 
@@ -142,26 +143,25 @@ export default function Home() {
               <span className="text-sm"> comments ({ticket.comments.length})</span>
             </div>
 
+            {/* <div className="flex gap-4 mt-2 items-center">
+              <div className="flex flex-col items-center">
+                <Button variant="ghost" onClick={() => handleVote(ticket.id, "upvote")}>
+                  <ArrowUp color="green" size={20} />
+                </Button>
+                <span className="text-sm font-semibold">{ticket.upvotes ?? 0}</span>
+              </div>
 
-{/* <div className="flex gap-4 mt-2 items-center">
-  <div className="flex flex-col items-center">
-    <Button variant="ghost" onClick={() => handleVote(ticket.id, "upvote")}>
-      <ArrowUp color="green" size={20} />
-    </Button>
-    <span className="text-sm font-semibold">{ticket.upvotes ?? 0}</span>
-  </div>
-
-  <div className="flex flex-col items-center">
-    <Button variant="ghost" onClick={() => handleVote(ticket.id, "downvote")}>
-      <ArrowDown color="red" size={20} />
-    </Button>
-    <span className="text-sm font-semibold">{ticket.downvotes ?? 0}</span>
-  </div>
-</div> */}
+              <div className="flex flex-col items-center">
+                <Button variant="ghost" onClick={() => handleVote(ticket.id, "downvote")}>
+                  <ArrowDown color="red" size={20} />
+                </Button>
+                <span className="text-sm font-semibold">{ticket.downvotes ?? 0}</span>
+              </div>
+            </div> */}
             <span className="text-sm text-gray-600 italic"> this ticket was created by {ticket.createdBy}</span>
           </div>
         ))}
-        {filteredTickets.length===0&& <span>No results</span> }
+        {filteredTickets.length === 0 && <span>No results</span>}
       </div>
     </main>
   );
