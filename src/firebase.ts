@@ -1,17 +1,25 @@
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import {getAuth} from  "firebase/auth";
 const firebaseConfig = {
-  apiKey: "AIzaSyDkvTmzOwVmsS1vP3tkPJm2-1q6PlZYnDo",
-  authDomain: "cf-work-d3dd6.firebaseapp.com",
-  projectId: "cf-work-d3dd6",
-  storageBucket: "cf-work-d3dd6.appspot.com",
-  messagingSenderId: "952607854348",
-  appId: "1:952607854348:web:45e3759e2ac0017c0a8329",
-  measurementId: "G-3BKTGLKYDP"
+
+  apiKey: "AIzaSyAL2cCiXrqi-7ZK6vP27GEeiWlYFjM8gNg",
+
+  authDomain: "tickets-1b8f3.firebaseapp.com",
+
+  projectId: "tickets-1b8f3",
+
+  storageBucket: "tickets-1b8f3.appspot.com",
+
+  messagingSenderId: "575801920929",
+
+  appId: "1:575801920929:web:d510585cdc87ff6d0ccfe0",
+
+  measurementId: "G-HBH5XC0RE0"
+
 };
+
 
 
 const app = initializeApp(firebaseConfig);
