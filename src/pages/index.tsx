@@ -108,8 +108,9 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col gap-6">
-        {filteredTickets.map((ticket) => (
-          <div
+        {filteredTickets.map((ticket) =>{
+          if(ticket.createdBy===user?.email||ticket.assignedTo===user?.email){
+            return   <div
             key={ticket.id}
             className={twMerge(
               ticket.status === "open" ? "bg-green-100" :
@@ -160,7 +161,12 @@ export default function Home() {
             </div> */}
             <span className="text-sm text-gray-600 italic"> this ticket was created by {ticket.createdBy}</span>
           </div>
-        ))}
+          }else{
+            return <></>
+          }
+        }
+        
+        )}
         {filteredTickets.length === 0 && <span>No results</span>}
       </div>
     </main>

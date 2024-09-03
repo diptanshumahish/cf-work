@@ -82,7 +82,7 @@ export default function TicketDetails() {
         <span>Ticket id {decodeURIComponent(ticketId?.toString()!)}</span>
 
 
-        {user?.email === ticket.createdBy && <div className="flex items-center space-x-2">
+        {(user?.email === ticket.createdBy||user?.email===ticket.assignedTo) && <div className="flex items-center space-x-2">
       <Switch id="airplane-mode" onCheckedChange={()=> setIsEditMode((prev) => !prev) } />
       <Label htmlFor="airplane-mode">Edit mode</Label>
         </div>}
