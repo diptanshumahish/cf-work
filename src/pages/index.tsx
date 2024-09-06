@@ -22,6 +22,12 @@ export default function Home() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+
+  const openTicketsCount = tickets.filter(ticket => ticket.status === "open").length;
+  const inProgressTicketsCount = tickets.filter(ticket => ticket.status === "in-progress").length;
+  const closedTicketsCount = tickets.filter(ticket => ticket.status === "closed").length;
+  const totalTicketsCount = tickets.length;
+
   const fetchTickets = async () => {
     const ticketsQuery = query(
       collection(db, "tickets"),
@@ -84,6 +90,14 @@ export default function Home() {
         <Link className="bg-black text-white px-6 py-2 rounded-md" href="/newticket">
           Add new
         </Link>
+      </div>
+      <div className="flex justify-between items-center mb-4">
+        <span className="text-lg font-semibold">Total Tickets: {totalTicketsCount}</span>
+        <div className="flex gap-4">
+          <span className="text-green-600">Open: {openTicketsCount}</span>
+          <span className="text-blue-600">In Progress: {inProgressTicketsCount}</span>
+          <span className="text-gray-600">Closed: {closedTicketsCount}</span>
+        </div>
       </div>
 
       <div className="mb-4 flex gap-4">
