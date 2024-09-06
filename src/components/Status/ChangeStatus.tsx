@@ -4,14 +4,21 @@ import { db } from "@/firebase";
 import { Toaster, toast } from "sonner";
 
 interface ChangeStatusProps {
+  admin: boolean;
   ticketId: string;
   currentStatus: string;
-  onS:()=>void;
+  onS: () => void;
 }
 
-const statusOptions = ["open", "in-progress", "closed"];
+const statusOptions = ["open", "in-progress"];
+const statusOptionsAdmin = ["open", "in-progress", "closed"];
 
-export default function ChangeStatus({ ticketId, currentStatus,onS }: ChangeStatusProps) {
+export default function ChangeStatus({
+  ticketId,
+  currentStatus,
+  onS,
+  admin,
+}: ChangeStatusProps) {
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +36,6 @@ export default function ChangeStatus({ ticketId, currentStatus,onS }: ChangeStat
 
       toast.success(`Ticket status changed to ${newStatus}`);
       onS();
-
     } catch (error) {
       toast.error("Error changing status. Please try again.");
       console.error("Error updating document: ", error);
@@ -41,22 +47,41 @@ export default function ChangeStatus({ ticketId, currentStatus,onS }: ChangeStat
   return (
     <div className="mt-4">
       <Toaster />
-      <label htmlFor="status" className="block text-gray-700 font-semibold mb-2">
+      <label
+        htmlFor="status"
+        className="block text-gray-700 font-semibold mb-2"
+      >
         Change Ticket Status
       </label>
-      <select
-        id="status"
-        value={status}
-        onChange={handleChange}
-        className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
-        disabled={loading}
-      >
-        {statusOptions.map((option) => (
-          <option key={option} value={option}>
-            {option.charAt(0).toUpperCase() + option.slice(1)}
-          </option>
-        ))}
-      </select>
+      {admin ? (
+        <select
+          id="status"
+          value={status}
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
+          disabled={loading}
+        >
+          {statusOptionsAdmin.map((option) => (
+            <option key={option} value={option}>
+              {option.charAt(0).toUpperCase() + option.slice(1)}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <select
+          id="status"
+          value={status}
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
+          disabled={loading}
+        >
+          {statusOptions.map((option) => (
+            <option key={option} value={option}>
+              {option.charAt(0).toUpperCase() + option.slice(1)}
+            </option>
+          ))}
+        </select>
+      )}
     </div>
   );
 }

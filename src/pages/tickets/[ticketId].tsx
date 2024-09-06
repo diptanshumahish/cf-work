@@ -148,7 +148,7 @@ export default function TicketDetails() {
         </p>
         <p className="text-gray-600 mb-4">
           <strong>Status:</strong> <ReturnStatus status={ticket.status} />
-          {(user?.email === ticket.createdBy) && <ChangeStatus onS={()=>{fetchTicket()}} ticketId={ticketId as string} currentStatus={ticket.status} />}
+          {(user?.email === ticket.createdBy||user?.email===ticket.assignedTo) && <ChangeStatus admin={user?.email===ticket.createdBy} onS={()=>{fetchTicket()}} ticketId={ticketId as string} currentStatus={ticket.status} />}
         </p>
 
         {ticket.comments.length > 0 && (
